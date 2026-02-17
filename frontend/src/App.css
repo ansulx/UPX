@@ -1,0 +1,285 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.auth-card {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-card h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+}
+
+.auth-card .subtitle {
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-card input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 1rem;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.auth-card button {
+  padding: 0.75rem;
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.auth-card button:hover:not(:disabled) {
+  background: #0284c7;
+}
+
+.auth-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-card .error {
+  color: #f87171;
+  margin: 0;
+}
+
+.auth-card p {
+  margin-top: 1rem;
+  color: #94a3b8;
+}
+
+.auth-card a {
+  color: #38bdf8;
+}
+
+.dashboard {
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-right span {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.header-right button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.header-right button:hover {
+  background: #334155;
+}
+
+.agent-badge {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.portfolio-summary {
+  margin-bottom: 1rem;
+}
+
+.portfolio-summary .total {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+.allocations {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.allocations li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #334155;
+}
+
+.agent-explanation {
+  background: rgba(56, 189, 248, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.deposit-card form,
+.agent-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.deposit-card input,
+.deposit-card select,
+.agent-card input {
+  padding: 0.75rem;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.deposit-card button,
+.agent-card button,
+.fee-card button {
+  padding: 0.75rem;
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deposit-card button:hover:not(:disabled),
+.agent-card button:hover:not(:disabled),
+.fee-card button:hover:not(:disabled) {
+  background: #0284c7;
+}
+
+.muted {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: #f87171;
+  margin: 0;
+}
+
+.agent-response {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #1e293b;
+  border-radius: 8px;
+  white-space: pre-wrap;
+}
+
+.notifications {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notifications li {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid #475569;
+}
+
+.notifications li.allocation {
+  border-left-color: #22c55e;
+}
+
+.notifications li.deposit {
+  border-left-color: #0ea5e9;
+}
+
+.notifications li.fee {
+  border-left-color: #a855f7;
+}
+
+.notifications li strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.notifications li p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.notifications li small {
+  color: #64748b;
+  font-size: 0.75rem;
+}
