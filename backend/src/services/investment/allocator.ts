@@ -28,6 +28,8 @@ export interface AllocationResult {
   expectedReturn: number;
 }
 
+const MIN_INSTRUMENT = STABLE_INSTRUMENTS.reduce((a, b) => (a.minAmount <= b.minAmount ? a : b));
+
 export function allocateStable(amount: number): AllocationResult[] {
   const results: AllocationResult[] = [];
   let remaining = amount;
@@ -48,6 +50,17 @@ export function allocateStable(amount: number): AllocationResult[] {
 
   if (remaining > 0 && results.length > 0) {
     results[0].amount += remaining;
+  }
+
+  // When amount is below all instrument minAmount values, allocate full amount to the instrument
+  // with smallest minAmount so funds are represented in portfolio totals.
+  if (results.length === 0 && amount > 0) {
+    results.push({
+      instrumentType: MIN_INSTRUMENT.type,
+      instrumentName: MIN_INSTRUMENT.name,
+      amount,
+      expectedReturn: MIN_INSTRUMENT.expectedReturn,
+    });
   }
 
   return results;
