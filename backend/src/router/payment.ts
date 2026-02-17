@@ -21,6 +21,15 @@ paymentRouter.use(authMiddleware);
 paymentRouter.post("/deposit", async (req: Request & { user?: AuthPayload }, res: Response) => {
   try {
     const userId = req.user!.userId;
+    const year = new Date().getFullYear();
+    const feePaid = db.prepare("SELECT id FROM user_fees WHERE user_id = ? AND year = ?").get(userId, year);
+    if (!feePaid) {
+      res.status(402).json({
+        error: "Current-year management fee must be paid before depositing. Please pay the yearly fee first.",
+      });
+      return;
+    }
+
     const parsed = depositSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: "Invalid input", details: parsed.error.flatten() });
