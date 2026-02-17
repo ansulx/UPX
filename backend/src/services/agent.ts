@@ -13,10 +13,16 @@ const SYSTEM_PROMPT = `You are an AI financial agent. You manage user funds by a
 - Your goal: positive portfolio returns with minimal risk.
 - Be concise. When asked to allocate, respond with a short confirmation and allocation summary.`;
 
+export interface AgentAllocateOptions {
+  /** When true, skip creating the allocation notification (caller will create it in a transaction) */
+  skipNotification?: boolean;
+}
+
 export async function agentAllocate(
   userId: number,
   amount: number,
-  depositId?: number
+  depositId?: number,
+  options?: AgentAllocateOptions
 ): Promise<{ allocations: AllocationResult[]; agentMessage: string }> {
   const allocations = allocateStable(amount);
 
@@ -34,16 +40,18 @@ export async function agentAllocate(
     agentMessage = `Allocation completed. ${allocations.length} stable instruments selected. (Agent offline - using rule-based allocation.)`;
   }
 
-  const summary = allocations
-    .map((a) => `${a.instrumentName}: ₹${a.amount} (${a.expectedReturn}% expected)`)
-    .join("; ");
+  if (!options?.skipNotification) {
+    const summary = allocations
+      .map((a) => `${a.instrumentName}: ₹${a.amount} (${a.expectedReturn}% expected)`)
+      .join("; ");
 
-  createNotification(
-    userId,
-    "Funds Allocated",
-    `Your deposit of ₹${amount} has been allocated: ${summary}. Agent: ${agentMessage.slice(0, 200)}...`,
-    "allocation"
-  );
+    createNotification(
+      userId,
+      "Funds Allocated",
+      `Your deposit of ₹${amount} has been allocated: ${summary}. Agent: ${agentMessage.slice(0, 200)}...`,
+      "allocation"
+    );
+  }
 
   return { allocations, agentMessage };
 }

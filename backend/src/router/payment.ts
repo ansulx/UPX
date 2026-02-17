@@ -39,21 +39,46 @@ paymentRouter.post("/deposit", async (req: Request & { user?: AuthPayload }, res
 
     const amountINR = currency === "USD" ? amount * 83 : amount;
 
-    const stmt = db.prepare(
-      "INSERT INTO deposits (user_id, amount, currency, payment_method, payment_id, status) VALUES (?, ?, ?, ?, ?, ?)"
-    );
-    const result = stmt.run(userId, amountINR, currency, payment_method, payment_id ?? null, "completed");
-    const depositId = result.lastInsertRowid as number;
+    // Run allocation logic first (async, no DB writes) so we can wrap all DB writes in one transaction
+    const { allocations, agentMessage } = await agentAllocate(userId, amountINR, undefined, {
+      skipNotification: true,
+    });
 
-    createNotification(userId, "Deposit Received", `₹${amountINR} received via ${payment_method}. Allocation in progress.`, "deposit");
+    const depositTransaction = db.transaction(() => {
+      const result = db
+        .prepare(
+          "INSERT INTO deposits (user_id, amount, currency, payment_method, payment_id, status) VALUES (?, ?, ?, ?, ?, ?)"
+        )
+        .run(userId, amountINR, currency, payment_method, payment_id ?? null, "completed");
+      const depositId = result.lastInsertRowid as number;
 
-    const { allocations } = await agentAllocate(userId, amountINR, depositId);
+      createNotification(
+        userId,
+        "Deposit Received",
+        `₹${amountINR} received via ${payment_method}. Allocation in progress.`,
+        "deposit"
+      );
 
-    for (const a of allocations) {
-      db.prepare(
-        "INSERT INTO allocations (user_id, deposit_id, instrument_type, instrument_name, amount, expected_return) VALUES (?, ?, ?, ?, ?, ?)"
-      ).run(userId, depositId, a.instrumentType, a.instrumentName, a.amount, a.expectedReturn);
-    }
+      const summary = allocations
+        .map((a) => `${a.instrumentName}: ₹${a.amount} (${a.expectedReturn}% expected)`)
+        .join("; ");
+      createNotification(
+        userId,
+        "Funds Allocated",
+        `Your deposit of ₹${amountINR} has been allocated: ${summary}. Agent: ${agentMessage.slice(0, 200)}...`,
+        "allocation"
+      );
+
+      for (const a of allocations) {
+        db.prepare(
+          "INSERT INTO allocations (user_id, deposit_id, instrument_type, instrument_name, amount, expected_return) VALUES (?, ?, ?, ?, ?, ?)"
+        ).run(userId, depositId, a.instrumentType, a.instrumentName, a.amount, a.expectedReturn);
+      }
+
+      return depositId;
+    });
+
+    const depositId = depositTransaction();
 
     res.status(201).json({
       deposit_id: depositId,
