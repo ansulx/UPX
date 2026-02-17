@@ -1,7 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-in-production";
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error(
+      "JWT_SECRET environment variable is required. Set it in .env or your deployment config."
+    );
+  }
+  return secret;
+}
+const JWT_SECRET = getJwtSecret();
 
 export interface AuthPayload {
   userId: number;
