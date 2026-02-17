@@ -71,12 +71,11 @@ paymentRouter.post("/fee", async (req: Request & { user?: AuthPayload }, res: Re
   try {
     const userId = req.user!.userId;
     const year = new Date().getFullYear();
-    const existing = db.prepare("SELECT id FROM user_fees WHERE user_id = ? AND year = ?").get(userId, year);
-    if (existing) {
+    const result = db.prepare("INSERT OR IGNORE INTO user_fees (user_id, amount, year) VALUES (?, ?, ?)").run(userId, YEARLY_FEE, year);
+    if (result.changes === 0) {
       res.status(400).json({ error: "Yearly fee already paid for this year" });
       return;
     }
-    db.prepare("INSERT INTO user_fees (user_id, amount, year) VALUES (?, ?, ?)").run(userId, YEARLY_FEE, year);
     createNotification(userId, "Fee Paid", `Yearly management fee of ₹${YEARLY_FEE} paid for ${year}.`, "fee");
     res.status(201).json({ fee: YEARLY_FEE, year, message: "Fee paid successfully." });
   } catch (err) {

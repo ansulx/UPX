@@ -24,8 +24,11 @@ export function initDb() {
       amount REAL NOT NULL,
       year INTEGER NOT NULL,
       paid_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      UNIQUE(user_id, year)
     );
+
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_user_fees_user_year ON user_fees(user_id, year);
 
     CREATE TABLE IF NOT EXISTS deposits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
