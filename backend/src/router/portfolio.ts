@@ -19,7 +19,7 @@ portfolioRouter.get("/", async (req: Request & { user?: AuthPayload }, res: Resp
     const total = allocations.reduce((sum, a) => sum + a.amount, 0);
     const weightedReturn =
       total > 0
-        ? allocations.reduce((sum, a) => sum + (a.amount * a.expected_return) / 100, 0) / total
+        ? allocations.reduce((sum, a) => sum + a.amount * a.expected_return, 0) / total
         : 0;
 
     const summary = `Total: ₹${total}, ${allocations.length} instruments, avg expected return: ${weightedReturn.toFixed(2)}%`;
